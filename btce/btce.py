@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # BTC-e API Class
-# Developed by acidvegas in Python 3
+# Developed by acidvegas in Python
 # https://github.com/acidvegas/btc-e
 # btce.py
 
