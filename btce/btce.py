@@ -22,30 +22,30 @@ http_timeout = 10
 
 class public_api:
 	def api_call(method):
-		conn = http.client.HTTPSConnection('btc-e.com', timeout=http_timeout)
+		conn = http.client.HTTPSConnection('wex.nz', timeout=http_timeout)
 		conn.request('GET', '/api/3/' + method)
 		response = conn.getresponse().read().decode()
 		data     = json.loads(response)
 		conn.close()
 		return data
 
-	def info():
+	def info(self):
 		return public_api.api_call('info')
 
-	def ticker(tfrom, tto):
-		return public_api.api_call(f'ticker/{tfrom}_{tto}')
-
-	def depth(dfrom, dto, limit=None):
+	def ticker(self, pair):
+		return public_api.api_call(f'ticker/{pair}')
+	
+	def depth(self, pair, limit=None):
 		if limit: # 150 Default / 5000 Max
-			return public_api.api_call(f'depth/{dfrom}_{dto}?limit={limit}')
+			return public_api.api_call(f'depth/{pair}?limit={limit}')
 		else:
-			return public_api.api_call(f'depth/{dfrom}_{dto}')
+			return public_api.api_call(f'depth/{pair}')
 
-	def trades(dfrom, dto, limit=None):
+	def trades(self, pair, limit=None):
 		if limit: # 150 Default / 5000 Max
-			return public_api.api_call(f'trades/{dfrom}_{dto}?limit={limit}')
+			return public_api.api_call(f'trades/{pair}?limit={limit}')
 		else:
-			return public_api.api_call(f'trades/{dfrom}_{dto}')
+			return public_api.api_call(f'trades/{pair}')
 
 class trade_api:
 	def __init__(self, api_key, api_secret, api_nonce):
@@ -63,7 +63,7 @@ class trade_api:
 		params['nonce']  = str(self.api_nonce)
 		params  = urllib.parse.urlencode(params)
 		headers = {'Content-type':'application/x-www-form-urlencoded', 'Key':self.api_key, 'Sign':self.signature(params)}
-		conn    = http.client.HTTPSConnection('btc-e.com', timeout=http_timeout)
+		conn    = http.client.HTTPSConnection('wex.nz', timeout=http_timeout)
 		conn.request('POST', '/tapi', params, headers)
 		response = conn.getresponse().read().decode()
 		data     = json.loads(response)
