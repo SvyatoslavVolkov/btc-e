@@ -21,31 +21,40 @@ import time
 http_timeout = 10
 
 class public_api:
-	def api_call(method):
-		conn = http.client.HTTPSConnection('wex.nz', timeout=http_timeout)
-		conn.request('GET', '/api/3/' + method)
-		response = conn.getresponse().read().decode()
-		data     = json.loads(response)
-		conn.close()
-		return data
+    def api_call(method):
+        conn = http.client.HTTPSConnection('wex.nz', timeout=http_timeout)
+        try:
+            conn.request('GET', '/api/3/' + method)
+            response = conn.getresponse().read().decode()
+        except Exception:
+            print ("Request error")
+            data = {}
+            return data
+        try:
+            data = json.loads(response)
+        except ValueError:
+            print("Value error")
+            data = {}
+        conn.close()
+        return data
 
-	def info(self):
-		return public_api.api_call('info')
+    def info(self):
+        return public_api.api_call('info')
 
-	def ticker(self, pair):
-		return public_api.api_call(f'ticker/{pair}')
+    def ticker(self, pair):
+        return public_api.api_call(f'ticker/{pair}')
 	
-	def depth(self, pair, limit=None):
-		if limit: # 150 Default / 5000 Max
-			return public_api.api_call(f'depth/{pair}?limit={limit}')
-		else:
-			return public_api.api_call(f'depth/{pair}')
+    def depth(self, pair, limit=None):
+        if limit: # 150 Default / 5000 Max
+            return public_api.api_call(f'depth/{pair}?limit={limit}')
+        else:
+            return public_api.api_call(f'depth/{pair}')
 
-	def trades(self, pair, limit=None):
-		if limit: # 150 Default / 5000 Max
-			return public_api.api_call(f'trades/{pair}?limit={limit}')
-		else:
-			return public_api.api_call(f'trades/{pair}')
+    def trades(self, pair, limit=None):
+        if limit: # 150 Default / 5000 Max
+            return public_api.api_call(f'trades/{pair}?limit={limit}')
+        else:
+            return public_api.api_call(f'trades/{pair}')
 
 class trade_api:
 	def __init__(self, api_key, api_secret, api_nonce):
